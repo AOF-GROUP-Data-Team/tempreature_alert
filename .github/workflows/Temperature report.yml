@@ -1,0 +1,50 @@
+name: Temperature Check Report
+
+on:
+  schedule:
+    # All times KSA (UTC+3) → subtract 3 hours for UTC
+    - cron: '30 22 * * *'   # 01:30 KSA
+    - cron: '30 1  * * *'   # 04:30 KSA
+    - cron: '30 4  * * *'   # 07:30 KSA
+    - cron: '30 7  * * *'   # 10:30 KSA
+    - cron: '30 10 * * *'   # 13:30 KSA (1:30 PM)
+    - cron: '30 13 * * *'   # 16:30 KSA (4:30 PM)
+    - cron: '30 19 * * *'   # 22:30 KSA (10:30 PM)
+
+  workflow_dispatch:
+    inputs:
+      window_start:
+        description: 'Window start (YYYY-MM-DD HH:MM) KSA. Leave empty for auto.'
+        required: false
+        default: ''
+      window_end:
+        description: 'Window end (YYYY-MM-DD HH:MM) KSA. Leave empty for auto.'
+        required: false
+        default: ''
+
+jobs:
+  run-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Temperature Report
+        env:
+          ZENPUT_API_KEY: ${{ secrets.ZENPUT_API_KEY }}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          INPUT_START: ${{ github.event.inputs.window_start }}
+          INPUT_END: ${{ github.event.inputs.window_end }}
+        run: python temperature_report.py
