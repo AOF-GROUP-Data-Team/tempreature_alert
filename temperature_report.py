@@ -6,7 +6,6 @@
 
 # !pip install requests pandas openpyxl Pillow gspread gspread-dataframe google-auth-oauthlib pytz google-api-python-client
 
-from google.colab import auth
 from google.auth import default
 import gspread
 from gspread_dataframe import set_with_dataframe
