@@ -654,7 +654,8 @@ print(f"📅 Running for {DATE_STR}")
 all_subs = fetch_submissions()
 
 if not all_subs:
-    print("⚠️  No submissions found for today.")
+    print("⚠️  No submissions found for today. Sending empty alert email...")
+    send_email([], None) # <--- THIS SENDS THE EMPTY EMAIL
 else:
     rows = parse_submissions(all_subs)
 
@@ -665,5 +666,7 @@ else:
     OUTPUT = f"Temperature_Report_{WINDOW_START.strftime('%Y-%m-%d_%H%M')}_{WINDOW_END.strftime('%H%M')}.xlsx"
     build_excel(rows, OUTPUT)
 
-   
+    print("\n📧 Sending email...")
+    send_email(rows, OUTPUT) # <--- THIS SENDS THE EXCEL EMAIL
+
     print("🎉 Done!")
