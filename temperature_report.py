@@ -665,5 +665,5 @@ else:
     OUTPUT = f"Temperature_Report_{WINDOW_START.strftime('%Y-%m-%d_%H%M')}_{WINDOW_END.strftime('%H%M')}.xlsx"
     build_excel(rows, OUTPUT)
 
-    files.download(OUTPUT)
+   
     print("🎉 Done!")
