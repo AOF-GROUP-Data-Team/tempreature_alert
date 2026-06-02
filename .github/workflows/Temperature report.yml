@@ -44,6 +44,7 @@ jobs:
       - name: Run Temperature Report
         env:
           ZENPUT_API_KEY: ${{ secrets.ZENPUT_API_KEY }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
           INPUT_START: ${{ github.event.inputs.window_start }}
           INPUT_END: ${{ github.event.inputs.window_end }}
