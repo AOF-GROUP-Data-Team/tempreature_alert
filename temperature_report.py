@@ -1,7 +1,7 @@
 # ============================================================
 # TEMPERATURE CHECK REPORT — Template 943193
 # Runs every 2 hours — 6 times daily
-# Colab version for testing before GitHub Actions
+# GitHub Actions Version
 # ============================================================
 
 # !pip install requests pandas openpyxl Pillow gspread gspread-dataframe google-auth-oauthlib pytz google-api-python-client
@@ -65,7 +65,7 @@ else:
 RUN_DATE = WINDOW_END.date()
 DATE_STR = WINDOW_START.date().strftime("%Y-%m-%d")
 
-# Photo settings (same as gas report)
+# Photo settings
 IMG_SIZE    = 250
 IMG_HEIGHT  = 200
 GAP_PX      = 6
@@ -85,8 +85,8 @@ FID_BURGER_CHILLER_PHOTO = 13660202; FID_BURGER_CHILLER_TEMP = 13660203
 FID_MINI_FREEZER_PHOTO   = 13660204; FID_MINI_FREEZER_TEMP   = 13660205
 FID_DRINKS_CHILLER_PHOTO = 13660397; FID_DRINKS_CHILLER_TEMP = 13660398
 
-# New main freezer section (no submissions yet — same pattern)
-FID_MAIN_FREEZER2_PHOTO  = None   # will add when known
+# New main freezer section
+FID_MAIN_FREEZER2_PHOTO  = None   
 FID_MAIN_FREEZER2_TEMP   = None
 
 # Linear freezer (optional)
@@ -360,14 +360,6 @@ def build_excel(rows, output_path):
         all_ok    = row["All OK"]
         base_fill = ALT_FILL if ri % 2 == 1 else None
 
-        # Collect any Claude mismatches for this row
-        mismatches = []
-        for cn, _, _ in CHILLERS:
-            note = row.get(f"{cn} Vision Note", "")
-            if "MISMATCH" in str(note):
-                mismatches.append(note)
-        mismatch_str = " | ".join(mismatches) if mismatches else ""
-
         values = [
             row["Date & Time"], row["Branch"],
             row.get("Main Chiller Raw", ""),
@@ -414,7 +406,7 @@ def build_excel(rows, output_path):
         "Linear Freezer":   "16A085",
     }
 
-    # Calculate max photos per chiller dynamically (some submissions may have 2)
+    # Calculate max photos per chiller dynamically
     max_photos_per_chiller = {}
     for chiller_name, _, _ in CHILLERS:
         max_p = max((len(row.get(f"{chiller_name} Photos", [])) for row in rows), default=1)
@@ -528,12 +520,14 @@ def send_email(rows, excel_path):
     RECIPIENTS_CC = ["m.hejazi@aofgroup.com", "a.alsalem@aofgroup.com"]
 
     if not rows:
-        subject = f"⚠️ لا توجد بيانات درجات الحرارة - {WINDOW_START.strftime('%Y-%m-%d %H:%M')} → {WINDOW_END.strftime('%H:%M')}"
+        subject = f"⚠️ لا توجد بيانات درجات الحرارة | من {WINDOW_START.strftime('%H:%M')} إلى {WINDOW_END.strftime('%H:%M')} ({DATE_STR})"
         body = f"""<html><head><meta charset="UTF-8"></head>
         <body dir="rtl" style="font-family:Arial,sans-serif;font-size:14px;padding:20px;">
             <div style="background:#2C3E50;color:#fff;padding:16px;border-radius:8px;margin-bottom:20px;">
                 <h2 style="margin:0;">🌡️ تقرير درجات الحرارة</h2>
-                <p style="margin:4px 0 0;opacity:0.8;">{WINDOW_START.strftime('%Y-%m-%d %H:%M')} → {WINDOW_END.strftime('%H:%M')}</p>
+                <p style="margin:4px 0 0;opacity:0.8;">
+                    <span dir="ltr">{WINDOW_START.strftime('%H:%M')} &rarr; {WINDOW_END.strftime('%H:%M')}</span> | <span dir="ltr">{DATE_STR}</span>
+                </p>
             </div>
             <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:16px;">
                 <p style="margin:0;">⚠️ لا توجد تقارير مسجلة لهذه الفترة.</p>
@@ -562,14 +556,14 @@ def send_email(rows, excel_path):
                 </tr>"""
             return html
 
-        subject = f"🌡️ تقرير درجات الحرارة {'🚨 تنبيهات' if alert_rows else '✅ سليم'} - {WINDOW_START.strftime('%H:%M')}→{WINDOW_END.strftime('%H:%M')}"
+        subject = f"🌡️ تقرير درجات الحرارة {'🚨 تنبيهات' if alert_rows else '✅ سليم'} | من {WINDOW_START.strftime('%H:%M')} إلى {WINDOW_END.strftime('%H:%M')}"
 
         body = f"""<html><head><meta charset="UTF-8"></head>
         <body dir="rtl" style="font-family:Arial,sans-serif;font-size:14px;line-height:1.8;color:#000;max-width:900px;margin:auto;padding:20px;">
             <div style="background:#2C3E50;color:#fff;padding:16px 20px;border-radius:8px;margin-bottom:20px;">
                 <h2 style="margin:0;">🌡️ تقرير درجات الحرارة</h2>
                 <p style="margin:4px 0 0;font-size:13px;opacity:0.8;">
-                    الفترة: {WINDOW_START.strftime('%Y-%m-%d %H:%M')} → {WINDOW_END.strftime('%H:%M')} |
+                    الفترة: <span dir="ltr">{WINDOW_START.strftime('%H:%M')} &rarr; {WINDOW_END.strftime('%H:%M')}</span> |
                     {len(rows)} فرع | {len(alert_rows)} تنبيه
                 </p>
             </div>
@@ -655,7 +649,7 @@ all_subs = fetch_submissions()
 
 if not all_subs:
     print("⚠️  No submissions found for today. Sending empty alert email...")
-    send_email([], None) # <--- THIS SENDS THE EMPTY EMAIL
+    send_email([], None)
 else:
     rows = parse_submissions(all_subs)
 
@@ -667,6 +661,6 @@ else:
     build_excel(rows, OUTPUT)
 
     print("\n📧 Sending email...")
-    send_email(rows, OUTPUT) # <--- THIS SENDS THE EXCEL EMAIL
+    send_email(rows, OUTPUT)
 
-    print("🎉 Done!")
+print("🎉 Done!")
