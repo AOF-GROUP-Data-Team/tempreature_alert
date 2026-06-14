@@ -124,7 +124,7 @@ BRANCH_MAP = {
     "2197297": "NSRUH B04",   "2164021": "SHRUH B10",   "2164013": "KHRUH B02",
     "2155652": "NURUH B01",   "2164023": "TWRUH B12",   "2164020": "AZRUH B09",
     "2199002": "RWAHS B25",   "2242934": "HIRJED B33",  "2164022": "NRRUH B11",
-    "2164030": "MURUH B19",   "2164014": "GHRUH B03",   "2211854": "QADRUH B30",
+    "2164030": "MURUH B19",   "2211854": "QADRUH B30",
     "2254072": "Garatiss QB03","2256386": "Garatiss QB04","2258220": "PSJED B36",
     "2169459": "Lubda Alaqeq Branch LB01",               "2232755": "Garatis As Suwaidi QB01",
     "2185452": "OBJED B22",   "2243963": "URURUH B34",  "2222802": "Lubda Alkhaleej Branch LB02",
