@@ -1,15 +1,15 @@
 name: Temperature Check Report
 
 on:
-  # schedule:
-  #   # All times KSA (UTC+3) → subtract 3 hours for UTC
-  #   - cron: '30 22 * * *'   # 01:30 KSA
-  #   - cron: '30 1  * * *'   # 04:30 KSA
-  #   - cron: '30 4  * * *'   # 07:30 KSA
-  #   - cron: '30 7  * * *'   # 10:30 KSA
-  #   - cron: '30 10 * * *'   # 13:30 KSA (1:30 PM)
-  #   - cron: '30 13 * * *'   # 16:30 KSA (4:30 PM)
-  #   - cron: '30 19 * * *'   # 22:30 KSA (10:30 PM)
+  schedule:
+    # All times KSA (UTC+3) → subtract 3 hours for UTC
+    - cron: '30 22 * * *'   # 01:30 KSA
+    - cron: '30 1  * * *'   # 04:30 KSA
+    - cron: '30 4  * * *'   # 07:30 KSA
+    - cron: '30 7  * * *'   # 10:30 KSA
+    - cron: '30 10 * * *'   # 13:30 KSA (1:30 PM)
+    - cron: '30 13 * * *'   # 16:30 KSA (4:30 PM)
+    - cron: '30 19 * * *'   # 22:30 KSA (10:30 PM)
 
   workflow_dispatch:
     inputs:
